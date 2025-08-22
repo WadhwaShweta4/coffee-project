@@ -1,96 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Coffee Catalog</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #ece0d1;
-            font-family: "Segoe UI", sans-serif;
-        }
-        h1 {
-            color: #38220f;
-            font-weight: bold;
-        }
-        .card {
-            background-color: #dbc1ac;
-            border: none;
-            border-radius: 12px;
-        }
-        .card-title {
-            color: #38220f;
-            font-weight: 600;
-        }
-        .card-text {
-            color: #634832;
-        }
-        .form-label {
-            color: #634832;
-            font-weight: 500;
-        }
-        .form-control, .form-select {
-            border-radius: 10px;
-            border: 1px solid #967259;
-        }
-        .btn-primary {
-            background-color: #634832;
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #38220f;
-        }
-        .shadow-sm {
-            box-shadow: 0 4px 10px rgba(56,34,15,0.15) !important;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Coffee Experience</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0; padding: 0; overflow-x: hidden;
+      font-family: "Segoe UI", system-ui, Arial, sans-serif;
+      height: 100%;
+    }
+    /* container that slides */
+    #app {
+      display: flex;
+      width: 200vw;
+      height: 100vh;
+      transition: transform .8s ease-in-out;
+    }
+    #app.slide { transform: translateX(-100vw); }
+
+    section { width: 100vw; height: 100%; position: relative; }
+
+    /* Landing */
+    #landing {
+      background: linear-gradient(135deg, #f2ddc8, #dbc1ac);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6vw;
+    }
+    .logo {
+      position: absolute; top: 20px; left: 20px;
+      width: 64px; height: 64px; object-fit: contain;
+    }
+    #landing-text {
+      max-width: 45%;
+      color: #38220f;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      line-height: 1.1;
+    }
+    #landing-text h1 {
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      margin: 0 0 .5rem;
+    }
+    #landing-visual {
+      flex: 1; display: flex; justify-content: center;
+    }
+    #landing-visual img {
+      width: 27vw; max-width: 400px; height: auto;
+      border: none; border-radius: 0; box-shadow: none;
+    }
+    .beans {
+      position: absolute; width: 100px; opacity: .8;
+      pointer-events: none;
+    }
+    .beans.left { bottom: 5%; left: 5%; }
+    .beans.right { top: 10%; right: 5%; transform: rotate(15deg); }
+
+    .arrow {
+      position: absolute; bottom: 30px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem; color: #38220f; cursor: pointer;
+      transition: transform .3s;
+    }
+    .arrow:hover { transform: translateX(-50%) translateY(5px); }
+
+    /* Catalog */
+    #catalog {
+      background: #ece0d1;
+      overflow-y: auto; padding: 40px 0;
+    }
+    .catalog-title {
+      font-size: 2.5rem; font-weight: 700; color: #38220f;
+    }
+    .card-coffee {
+      background: #fff; border-radius: 12px;
+      padding: 1rem; box-shadow: 0 4px 12px rgba(56,34,15,0.1);
+    }
+    .card-coffee h5 { margin: 0 0 .3rem; color: #38220f; }
+    .card-coffee p { margin: 0; color: #634832; }
+
+    .form-label { color: #634832; font-weight: 600; }
+    .form-control, .form-select {
+      border-radius: 8px; border: 1px solid #967259;
+    }
+    .btn-primary {
+      background-color: #634832; border: none; border-radius: 8px;
+    }
+    .btn-primary:hover { background-color: #38220f; }
+  </style>
 </head>
 <body>
 
-<div class="container py-5">
-    <h1 class="text-center mb-4"> Coffee Catalog</h1>
+<div id="app">
+  <!-- Landing -->
+  <section id="landing">
+    <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NzB1b2tqaXRmY2ltdjF0NTQ2ZXgyNnVwamVtcTkwNTA1OHlvbTNzciZlcD12MV9naWZzX3NlYXJjaCZjdD1n/KAJT6Mzkl97xXnlNmF/giphy.gif" alt="Coffee Logo" class="logo" />
+    <div id="landing-text">
+      <h1>“Life begins after coffee.”</h1>
+      <p>Make your own coffee and explore the finest roasts</p>
+    </div>
+    <div id="landing-visual">
+      <img src="heroimg.png" alt="Coffee Bag Hero" />
+    </div>
+    <img src="beans1.svg" alt="Coffee Beans" class="beans left" />
+    <img src="beans3.svg" alt="Coffee Beans" class="beans right" />
+    <div class="arrow" id="go-to-catalog">➜</div>
+  </section>
 
-    <form id="filter-form" class="row g-3 mb-4">
+  <!-- Catalog -->
+  <section id="catalog">
+    <div class="container">
+      <h1 class="text-center catalog-title mb-4">Coffee Catalog</h1>
+      <form class="row mb-4 justify-content-center g-3" id="filter-form">
         <div class="col-md-4">
-            <label for="roast-selection" class="form-label">Filter by Roast</label>
-            <select id="roast-selection" class="form-select">
-                <option value="all">All Roasts</option>
+          <label for="roast-selection" class="form-label">Filter by Roast</label>
+          <select id="roast-selection" class="form-select">
+            <option value="all">All Roasts</option>
+            <option value="light">Light</option>
+            <option value="medium">Medium</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="search-name" class="form-label">Search by Name</label>
+          <input type="text" id="search-name" class="form-control" placeholder="Type coffee name..." />
+        </div>
+      </form>
+      <div id="coffees" class="row g-4"></div>
+      <div class="card mt-5" style="border-radius:12px; background:#dbc1ac; border:0;">
+        <div class="card-body">
+          <h5 class="card-title mb-3" style="color:#38220f;">Add a New Coffee</h5>
+          <form class="row g-3" id="add-coffee-form">
+            <div class="col-md-6">
+              <label for="new-coffee-name" class="form-label">Coffee Name</label>
+              <select id="new-coffee-name" class="form-select">
+                <option value="Espresso">Espresso</option>
+                <option value="Cappuccino">Cappuccino</option>
+                <option value="Latte">Latte</option>
+                <option value="Americano">Americano</option>
+                <option value="Mocha">Mocha</option>
+                <option value="Macchiato">Macchiato</option>
+                <option value="Flat White">Flat White</option>
+                <option value="Cortado">Cortado</option>
+                <option value="Ristretto">Ristretto</option>
+                <option value="Affogato">Affogato</option>
+                <option value="Irish Coffee">Irish Coffee</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="new-coffee-roast" class="form-label">Roast</label>
+              <select id="new-coffee-roast" class="form-select">
                 <option value="light">Light</option>
                 <option value="medium">Medium</option>
                 <option value="dark">Dark</option>
-            </select>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary w-100">Add</button>
+            </div>
+          </form>
         </div>
-        <div class="col-md-4">
-            <label for="search-name" class="form-label">Search by Name</label>
-            <input type="text" id="search-name" class="form-control" placeholder="Type a coffee name...">
-        </div>
-    </form>
-
-    <div id="coffees" class="row g-4"></div>
-    <div class="card mt-5 shadow">
-        <div class="card-body">
-            <h5 class="card-title">Add a New Coffee</h5>
-            <form id="add-coffee-form" class="row g-3">
-                <div class="col-md-6">
-                    <label for="new-coffee-name" class="form-label">Coffee Name</label>
-                    <input type="text" id="new-coffee-name" class="form-control" required>
-                </div>
-                <div class="col-md-4">
-                    <label for="new-coffee-roast" class="form-label">Roast</label>
-                    <select id="new-coffee-roast" class="form-select">
-                        <option value="light">Light</option>
-                        <option value="medium">Medium</option>
-                        <option value="dark">Dark</option>
-                    </select>
-                </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">Add</button>
-                </div>
-            </form>
-        </div>
+      </div>
     </div>
+  </section>
 </div>
 
-<script src="main.js"></script>
+<script>
+  const app = document.getElementById('app');
+  const goto = document.getElementById('go-to-catalog');
+  const coffeeContainer = document.getElementById('coffees');
+  const roastSelection = document.getElementById('roast-selection');
+  const searchInput = document.getElementById('search-name');
+  const addForm = document.getElementById('add-coffee-form');
+  const newCoffeeName = document.getElementById('new-coffee-name');
+  const newCoffeeRoast = document.getElementById('new-coffee-roast');
+
+  let coffees = [
+    {id:1,name:'Light City',roast:'light'},
+    {id:2,name:'Half City',roast:'light'},
+    {id:3,name:'Cinnamon',roast:'light'},
+    {id:4,name:'City',roast:'medium'},
+    {id:5,name:'American',roast:'medium'},
+    {id:6,name:'Breakfast',roast:'medium'},
+    {id:7,name:'High',roast:'dark'},
+    {id:8,name:'Continental',roast:'dark'},
+    {id:9,name:'New Orleans',roast:'dark'},
+    {id:10,name:'European',roast:'dark'},
+    {id:11,name:'Espresso',roast:'dark'},
+    {id:12,name:'Viennese',roast:'dark'},
+    {id:13,name:'Italian',roast:'dark'},
+    {id:14,name:'French',roast:'dark'}
+  ]; coffees.sort((a,b)=>a.id-b.id);
+
+  function renderCoffee(c){
+    return `
+      <div class="col-md-4">
+        <div class="card-coffee">
+          <h5>${c.name}</h5>
+          <p>Roast: ${c.roast}</p>
+        </div>
+      </div>`;
+  }
+  function renderCoffees(list){ coffeeContainer.innerHTML = list.map(renderCoffee).join(''); }
+
+  function updateCoffees(){
+    const r = roastSelection.value.toLowerCase();
+    const t = searchInput.value.trim().toLowerCase();
+    const filt = coffees.filter(c=> (r==='all'||c.roast===r) && c.name.toLowerCase().includes(t));
+    renderCoffees(filt);
+  }
+
+  addForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    coffees.push({id:coffees.length+1, name:newCoffeeName.value, roast:newCoffeeRoast.value});
+    addForm.reset();
+    updateCoffees();
+  });
+  roastSelection.addEventListener('change', updateCoffees);
+  searchInput.addEventListener('input', updateCoffees);
+
+  renderCoffees(coffees);
+  goto.addEventListener('click', ()=>app.classList.add('slide'));
+</script>
+
 </body>
 </html>

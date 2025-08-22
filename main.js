@@ -1,5 +1,6 @@
 "use strict";
 
+// Coffee Data
 let coffees = [
     {id: 1, name: 'Light City', roast: 'light'},
     {id: 2, name: 'Half City', roast: 'light'},
@@ -17,13 +18,17 @@ let coffees = [
     {id: 14, name: 'French', roast: 'dark'},
 ];
 
+// Elements
 const coffeeContainer = document.querySelector('#coffees');
 const roastSelection = document.querySelector('#roast-selection');
 const searchInput = document.querySelector('#search-name');
 const addForm = document.querySelector('#add-coffee-form');
+
+// 🔹 CHANGED: newCoffeeName is now a <select>, not a text input
 const newCoffeeName = document.querySelector('#new-coffee-name');
 const newCoffeeRoast = document.querySelector('#new-coffee-roast');
 
+// Render a single coffee card
 function renderCoffee(coffee) {
     return `
         <div class="col-md-4">
@@ -37,10 +42,12 @@ function renderCoffee(coffee) {
     `;
 }
 
+// Render all coffees
 function renderCoffees(coffeesToRender) {
     coffeeContainer.innerHTML = coffeesToRender.map(renderCoffee).join('');
 }
 
+// Filter and Search Logic
 function updateCoffees() {
     const roastValue = roastSelection.value;
     const searchTerm = searchInput.value.toLowerCase();
@@ -54,21 +61,30 @@ function updateCoffees() {
     renderCoffees(filtered);
 }
 
+// Add New Coffee
 function addCoffee(e) {
     e.preventDefault();
+
+    // 🔹 Since newCoffeeName is now a <select>, we just read the selected value
+    const name = newCoffeeName.value;
+    const roast = newCoffeeRoast.value;
+
     const newCoffee = {
         id: coffees.length ? coffees[coffees.length - 1].id + 1 : 1,
-        name: newCoffeeName.value,
-        roast: newCoffeeRoast.value
+        name: name,
+        roast: roast
     };
+
     coffees.push(newCoffee);
     updateCoffees();
     addForm.reset();
 }
 
+// Event Listeners
 roastSelection.addEventListener('change', updateCoffees);
 searchInput.addEventListener('input', updateCoffees);
 addForm.addEventListener('submit', addCoffee);
 
+// Initial Render (sorted by ID ascending)
 coffees.sort((a, b) => a.id - b.id);
 renderCoffees(coffees);

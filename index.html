@@ -109,6 +109,26 @@
       background: rgba(56, 34, 15, 0.1);
     }
 
+    /* Edit Button */
+    .edit-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #4a90e2;
+      transition: color 0.3s ease;
+      font-size: 1.2rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      position: absolute;
+      top: 8px;
+      right: 40px;
+      z-index: 10;
+    }
+    .edit-btn:hover {
+      color: #1c5dbf;
+      background: rgba(74, 144, 226, 0.1);
+    }
+
     /* Modal Styling */
     #confirmDeleteModal .modal-content,
     #confirmResetModal .modal-content {
@@ -208,6 +228,47 @@
       gap: 0.5rem;
       max-width: 350px;
     }
+
+    /* Inline edit form */
+    .edit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .edit-form input, .edit-form select {
+      border-radius: 8px; border: 1px solid #967259;
+      padding: 0.25rem 0.5rem;
+      font-size: 1rem;
+    }
+    .edit-form-buttons {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+    .edit-form-buttons button {
+      border-radius: 8px;
+      padding: 0.25rem 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .edit-save-btn {
+      background-color: #634832;
+      color: #f2ddc8;
+      border: none;
+    }
+    .edit-save-btn:hover {
+      background-color: #38220f;
+    }
+    .edit-cancel-btn {
+      background-color: transparent;
+      border: 1.5px solid #634832;
+      color: #634832;
+    }
+    .edit-cancel-btn:hover {
+      background-color: #634832;
+      color: #f2ddc8;
+      border-color: #38220f;
+    }
   </style>
 </head>
 <body>
@@ -250,11 +311,11 @@
       <div id="coffees" class="row g-4"></div>
       <div class="card mt-5" style="border-radius:12px; background:#dbc1ac; border:0;">
         <div class="card-body">
-          <h5 class="card-title mb-3" style="color:#38220f;">Add a New Coffee</h5>
-          <form class="row g-3" id="add-coffee-form">
-            <div class="col-md-6">
-              <label for="new-coffee-name" class="form-label">Coffee Name</label>
+          <form id="add-coffee-form" class="row g-3 align-items-center">
+            <div class="col-md-5">
+              <label for="new-coffee-name" class="form-label">New Coffee Name</label>
               <select id="new-coffee-name" class="form-select">
+                <option value="" disabled selected>Select a coffee name</option>
                 <option value="Espresso">Espresso</option>
                 <option value="Cappuccino">Cappuccino</option>
                 <option value="Latte">Latte</option>
@@ -266,9 +327,21 @@
                 <option value="Ristretto">Ristretto</option>
                 <option value="Affogato">Affogato</option>
                 <option value="Irish Coffee">Irish Coffee</option>
+                <option value="Light City">Light City</option>
+                <option value="Half City">Half City</option>
+                <option value="Cinnamon">Cinnamon</option>
+                <option value="City">City</option>
+                <option value="American">American</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="High">High</option>
+                <option value="Continental">Continental</option>
+                <option value="New Orleans">New Orleans</option>
+                <option value="European">European</option>
+                <option value="Italian">Italian</option>
+                <option value="French">French</option>
               </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
               <label for="new-coffee-roast" class="form-label">Roast</label>
               <select id="new-coffee-roast" class="form-select">
                 <option value="light">Light</option>
@@ -276,13 +349,13 @@
                 <option value="dark">Dark</option>
               </select>
             </div>
-            <div class="col-md-2">
-              <button type="submit" class="btn btn-primary w-100">Add</button>
+            <div class="col-md-2 d-flex align-items-end">
+              <button type="submit" class="btn btn-primary w-100">Add Coffee</button>
             </div>
           </form>
         </div>
       </div>
-      <button id="reset-data-btn">Reset to Default</button>
+      <button id="reset-data-btn" class="btn">Reset Data</button>
     </div>
   </section>
 </div>
@@ -292,7 +365,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="confirmDeleteLabel">Confirm Delete</h5>
+        <h5 class="modal-title" id="confirmDeleteLabel">Delete Coffee</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -300,7 +373,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmDeleteBtn">Delete</button>
+        <button type="button" class="btn btn-primary" id="delete-confirm-btn">Delete</button>
       </div>
     </div>
   </div>
@@ -311,21 +384,65 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="confirmResetLabel">Confirm Reset</h5>
+        <h5 class="modal-title" id="confirmResetLabel">Reset Coffee Data</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Are you sure you want to reset to the default coffee list? This will erase your changes.
+        Are you sure you want to reset the coffee data to default? This will remove all your changes.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmResetBtn">Reset</button>
+        <button type="button" class="btn btn-primary" id="reset-confirm-btn">Reset</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Toast Container -->
+<!-- Edit Coffee Modal -->
+<div class="modal fade" id="editCoffeeModal" tabindex="-1" aria-labelledby="editCoffeeLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:16px; background:#f2ddc8; box-shadow:0 8px 25px rgb(56 34 15 / 0.3); border:none;">
+      <div class="modal-header" style="border-bottom:none; background:transparent;">
+        <h5 class="modal-title" id="editCoffeeLabel" style="color:#38220f; font-weight:700; font-size:1.4rem;">Edit Coffee</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter:brightness(0.4);"></button>
+      </div>
+      <div class="modal-body" style="color:#634832; font-size:1.1rem; padding-top:0; padding-bottom:1.5rem;">
+        <form id="edit-coffee-form">
+          <div class="mb-3">
+            <label for="edit-coffee-name" class="form-label">Coffee Name</label>
+            <select id="edit-coffee-name" class="form-select" required>
+              <option value="Espresso">Espresso</option>
+              <option value="Cappuccino">Cappuccino</option>
+              <option value="Latte">Latte</option>
+              <option value="Americano">Americano</option>
+              <option value="Mocha">Mocha</option>
+              <option value="Macchiato">Macchiato</option>
+              <option value="Flat White">Flat White</option>
+              <option value="Ristretto">Ristretto</option>
+              <option value="Affogato">Affogato</option>
+              <option value="Irish Coffee">Irish Coffee</option>
+              <option value="Cinnamon">Cinnamon</option>
+              <option value="American">American</option>
+              <option value="High">High</option>
+              <option value="Continental">Continental</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="edit-coffee-roast" class="form-label">Roast</label>
+            <select id="edit-coffee-roast" class="form-select" required>
+              <option value="light">Light</option>
+              <option value="medium">Medium</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
 <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -347,7 +464,7 @@
     {id: 13, name: "French", roast: "dark"},
   ];
 
-  // DOM references
+  // DOM refs
   const coffeesContainer = document.getElementById("coffees");
   const roastSelection = document.getElementById("roast-selection");
   const searchName = document.getElementById("search-name");
@@ -358,12 +475,14 @@
 
   let coffees = [];
 
-  // Modal & Toast references
+  // Modal & Toast
   const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
   const confirmResetModal = new bootstrap.Modal(document.getElementById('confirmResetModal'));
+  const editCoffeeModal = new bootstrap.Modal(document.getElementById('editCoffeeModal'));
   const toastContainer = document.getElementById('toast-container');
 
   let coffeeIdToDelete = null;
+  let coffeeIdToEdit = null;
 
   // Load coffees from localStorage or default
   function loadCoffees() {
@@ -382,6 +501,11 @@
   // Save coffees to localStorage
   function saveCoffees() {
     localStorage.setItem('coffees', JSON.stringify(coffees));
+  }
+
+  // Capitalize first letter
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   // Render coffees list based on filters
@@ -411,6 +535,7 @@
           <button class="delete-btn" aria-label="Delete ${c.name}" title="Delete coffee" data-id="${c.id}">×</button>
           <h5>${c.name}</h5>
           <p>${capitalize(c.roast)} roast</p>
+          <button class="edit-btn" title="Edit coffee" aria-label="Edit ${c.name}" data-id="${c.id}">✎</button>
         </div>
       `;
 
@@ -419,115 +544,157 @@
 
     // Attach delete event listeners
     document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        coffeeIdToDelete = Number(e.target.dataset.id);
+      btn.onclick = (e) => {
+        coffeeIdToDelete = Number(e.currentTarget.getAttribute('data-id'));
         confirmDeleteModal.show();
-      });
+      };
+    });
+
+    // Attach edit event listeners
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        coffeeIdToEdit = Number(e.currentTarget.getAttribute('data-id'));
+        openEditModal(coffeeIdToEdit);
+      };
     });
   }
 
-  // Capitalize first letter
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
+  // Show toast message
+  function showToast(message, type = 'info') {
+    const toastEl = document.createElement('div');
+    toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+    toastEl.setAttribute('role', 'alert');
+    toastEl.setAttribute('aria-live', 'assertive');
+    toastEl.setAttribute('aria-atomic', 'true');
+    toastEl.style.minWidth = '250px';
 
-  // Add coffee
-  addCoffeeForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = newCoffeeNameSelect.value.trim();
-    const roast = newCoffeeRoastSelect.value;
-
-    if (!name) return showToast('Please select a coffee name.', 'warning');
-
-    // Check if coffee with same name+roast exists
-    if (coffees.some(c => c.name.toLowerCase() === name.toLowerCase() && c.roast === roast)) {
-      showToast('This coffee already exists.', 'warning');
-      return;
-    }
-
-    const newCoffee = {
-      id: Date.now(),
-      name,
-      roast,
-    };
-    coffees.push(newCoffee);
-    saveCoffees();
-    renderCoffees();
-    addCoffeeForm.reset();
-    showToast(`Added coffee: ${name}`, 'success');
-  });
-
-  // Confirm delete button
-  document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-    if (coffeeIdToDelete !== null) {
-      coffees = coffees.filter(c => c.id !== coffeeIdToDelete);
-      saveCoffees();
-      renderCoffees();
-      coffeeIdToDelete = null;
-      confirmDeleteModal.hide();
-      showToast('Coffee deleted.', 'success');
-    }
-  });
-  // Reset button triggers modal
-  resetDataBtn.addEventListener('click', () => {
-    confirmResetModal.show();
-  });
-
-  // Confirm reset
-  document.getElementById('confirmResetBtn').addEventListener('click', () => {
-    coffees = [...defaultCoffees];
-    saveCoffees();
-    renderCoffees();
-    confirmResetModal.hide();
-    showToast('Coffee list reset to default.', 'success');
-  });
-
-  // Filter handlers
-  roastSelection.addEventListener('change', renderCoffees);
-  searchName.addEventListener('input', renderCoffees);
-
-  // Landing arrow scroll
-  document.getElementById('go-to-catalog').addEventListener('click', () => {
-    document.getElementById('catalog').scrollIntoView({behavior: 'smooth'});
-  });
-
-  // Toast function
-  function showToast(message, type = 'success') {
-    // Types: success, success, warning, danger
-    const toastId = `toast${Date.now()}`;
-    const colors = {
-      success: 'bg-success text-white',
-      success: 'bg-success text-white',
-      warning: 'bg-warning text-dark',
-      danger: 'bg-danger text-white',
-    };
-
-    const toast = document.createElement('div');
-    toast.className = `toast align-items-center ${colors[type] || colors.success} border-0`;
-    toast.role = 'alert';
-    toast.ariaLive = 'assertive';
-    toast.ariaAtomic = 'true';
-    toast.id = toastId;
-    toast.innerHTML = `
+    toastEl.innerHTML = `
       <div class="d-flex">
         <div class="toast-body">${message}</div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
     `;
 
-    toastContainer.appendChild(toast);
+    toastContainer.appendChild(toastEl);
 
-    const bsToast = new bootstrap.Toast(toast, { delay: 3500 });
-    bsToast.show();
+    const toast = new bootstrap.Toast(toastEl, {delay: 3000});
+    toast.show();
 
-    toast.addEventListener('hidden.bs.toast', () => {
-      toast.remove();
+    toastEl.addEventListener('hidden.bs.toast', () => {
+      toastEl.remove();
     });
   }
 
-  // Init
+  // Add coffee handler
+  addCoffeeForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = newCoffeeNameSelect.value;
+    const roast = newCoffeeRoastSelect.value;
+
+    if (!name || !roast) {
+      showToast('Please select a coffee name and roast.', 'warning');
+      return;
+    }
+
+    // Check if coffee already exists (case-insensitive)
+    if (coffees.some(c => c.name.toLowerCase() === name.toLowerCase() && c.roast === roast)) {
+      showToast('This coffee already exists.', 'warning');
+      return;
+    }
+
+    // Generate new ID (max +1)
+    const newId = coffees.length > 0 ? Math.max(...coffees.map(c => c.id)) + 1 : 1;
+
+    coffees.push({id: newId, name, roast});
+    saveCoffees();
+    renderCoffees();
+
+    // Reset form
+    addCoffeeForm.reset();
+    newCoffeeNameSelect.selectedIndex = 0;
+
+    showToast(`Added coffee: ${name} (${capitalize(roast)})`, 'success');
+  });
+
+  // Delete confirmation button handler
+  document.getElementById('delete-confirm-btn').onclick = () => {
+    if (coffeeIdToDelete !== null) {
+      coffees = coffees.filter(c => c.id !== coffeeIdToDelete);
+      saveCoffees();
+      renderCoffees();
+      showToast('Coffee deleted.', 'success');
+      coffeeIdToDelete = null;
+      confirmDeleteModal.hide();
+    }
+  };
+
+  // Reset confirmation button handler
+  document.getElementById('reset-confirm-btn').onclick = () => {
+    coffees = [...defaultCoffees];
+    saveCoffees();
+    renderCoffees();
+    showToast('Coffee data reset to default.', 'success');
+    confirmResetModal.hide();
+  };
+
+  // Reset data button click shows modal
+  resetDataBtn.onclick = () => confirmResetModal.show();
+
+  // Filter inputs event handlers
+  roastSelection.addEventListener('change', renderCoffees);
+  searchName.addEventListener('input', renderCoffees);
+
+  // Open edit modal and pre-fill values
+  function openEditModal(id) {
+    const coffee = coffees.find(c => c.id === id);
+    if (!coffee) return;
+
+    document.getElementById('edit-coffee-name').value = coffee.name;
+    document.getElementById('edit-coffee-roast').value = coffee.roast;
+
+    editCoffeeModal.show();
+  }
+
+  // Handle edit coffee form submit
+  document.getElementById('edit-coffee-form').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const editedName = document.getElementById('edit-coffee-name').value;
+    const editedRoast = document.getElementById('edit-coffee-roast').value;
+
+    if (!editedName || !editedRoast) {
+      showToast('Please select a coffee name and roast.', 'warning');
+      return;
+    }
+
+    // Check for duplicates except current coffee
+    if (coffees.some(c => c.id !== coffeeIdToEdit && c.name.toLowerCase() === editedName.toLowerCase() && c.roast === editedRoast)) {
+      showToast('Another coffee with the same name and roast exists.', 'warning');
+      return;
+    }
+
+    // Update coffee
+    const index = coffees.findIndex(c => c.id === coffeeIdToEdit);
+    if (index !== -1) {
+      coffees[index].name = editedName;
+      coffees[index].roast = editedRoast;
+      saveCoffees();
+      renderCoffees();
+      showToast('Coffee updated successfully.', 'success');
+    }
+
+    editCoffeeModal.hide();
+  });
+
+  // Landing page arrow scroll to catalog
+  document.getElementById('go-to-catalog').addEventListener('click', () => {
+    document.getElementById('catalog').scrollIntoView({behavior: 'smooth'});
+  });
+
+  // Initial load
   loadCoffees();
   renderCoffees();
+
 </script>
 </body>
 </html>
